@@ -7,7 +7,6 @@ categories: 面试
 
 本篇主要讲解js的线程，even loop循环机制，堆栈，以及promise进阶面试题。
 
-这里用来测试
 
 <!-- more -->
 
