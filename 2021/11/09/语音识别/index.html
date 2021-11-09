@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本篇主要讲解的是使用前端html5以及nodejs作为后台服务器实现语音识别">
+<meta property="og:type" content="article">
+<meta property="og:title" content="语音识别">
+<meta property="og:url" content="http://yoursite.com/2021/11/09/%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB/index.html">
+<meta property="og:site_name" content="SanEr&#39;s Blog">
+<meta property="og:description" content="本篇主要讲解的是使用前端html5以及nodejs作为后台服务器实现语音识别">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-11-09T07:33:04.000Z">
+<meta property="article:modified_time" content="2021-11-09T07:36:01.249Z">
+<meta property="article:author" content="SanEr">
+<meta property="article:tag" content="学习，工具类">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2021/11/09/%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>语音识别 | SanEr's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">SanEr's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/userSanEr" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/11/09/%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="SanEr">
+      <meta itemprop="description" content="先努力优秀，再大方拥有">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="SanEr's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          语音识别
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-11-09 15:33:04 / 修改时间：15:36:01" itemprop="dateCreated datePublished" datetime="2021-11-09T15:33:04+08:00">2021-11-09</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E5%B7%A5%E5%85%B7%E7%B1%BB/" itemprop="url" rel="index"><span itemprop="name">工具类</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本篇主要讲解的是使用前端html5以及nodejs作为后台服务器实现语音识别</p>
+<a id="more"></a>
+
+<h4 id="语音识别"><a href="#语音识别" class="headerlink" title="语音识别"></a>语音识别</h4><blockquote>
+<p>赘述：</p>
+<ul>
+<li>这里讲的两种方法都是依靠浏览器开启允许识别语音权限然后进行录音</li>
+<li>继而将语音流传给后端、调取第三方apk进行语音识别</li>
+</ul>
+<p>关注点：</p>
+<ul>
+<li>使用阿里云 - 指定识别16k的wav后缀名的音频文件</li>
+<li>因先学习阿里云- 此时已get到转换音频文件的js方法 </li>
+<li>so.未关注百度云、但是转换之后的音频流是肯定会被识别的</li>
+</ul>
+<p>基本步骤：</p>
+<ul>
+<li>html中引入audio标签为后期传入音频流使用</li>
+<li>两个按钮：开始、停止(播放)</li>
+<li>调用recorder.js对音频文件进行处理</li>
+<li>传给node服务器，调取api接口进行语音识别</li>
+</ul>
+<p>重要步骤</p>
+<ul>
+<li>在recoder.js中基本封装对音频的转换方法，不需要我们过多关注</li>
+<li>需重点关注，当音频流转换好之后如何传给后台<ul>
+<li>(依靠a标签的属性)将识别好的音频流转换成文件下载到本地，使用node服务读取本地文件</li>
+<li>直接将音频流传递给后台，使用formdata传输的形式，将其传递给node服务器</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://github.com/userSanEr/CT_contorl/blob/main/CT_control" target="_blank" rel="noopener">源码链接：</a></p>
+</blockquote>
+<h5 id="使用前端html-nodejs-阿里云语音识别apk"><a href="#使用前端html-nodejs-阿里云语音识别apk" class="headerlink" title="使用前端html+nodejs+阿里云语音识别apk"></a>使用前端html+nodejs+阿里云语音识别apk</h5><blockquote>
+<p>阿里云使用axios发送请求的方式，进行前端与nodejs交互</p>
+</blockquote>
+<h6 id="html"><a href="#html" class="headerlink" title="html"></a>html</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;audio标签</span><br><span class="line">&lt;audio controls autoplay&gt;&lt;&#x2F;audio&gt;  </span><br><span class="line">&#x2F;&#x2F;双按钮</span><br><span class="line">&lt;input onclick&#x3D;&quot;startRecording()&quot; type&#x3D;&quot;button&quot; value&#x3D;&quot;录音&quot; &#x2F;&gt;</span><br><span class="line">&lt;input onclick&#x3D;&quot;playRecording()&quot; type&#x3D;&quot;button&quot; value&#x3D;&quot;播放&quot; &#x2F;&gt;</span><br></pre></td></tr></table></figure>
+
+<h6 id="js"><a href="#js" class="headerlink" title="js"></a>js</h6><ul>
+<li><p>本地js</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">var recorder;</span><br><span class="line">var audio &#x3D; document.querySelector(&#39;audio&#39;);</span><br><span class="line">&#x2F;&#x2F;开始录音</span><br><span class="line">function startRecording() &#123;</span><br><span class="line">    HZRecorder.get(function (rec) &#123;</span><br><span class="line">    	recorder &#x3D; rec;</span><br><span class="line">        recorder.start();</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line">&#x2F;&#x2F;停止录音</span><br><span class="line"> function playRecording() &#123;</span><br><span class="line"> 	recorder.play(audio);</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line"> &#x2F;&#x2F;请求获取后台返回信息</span><br><span class="line"> $(&#39;.audio&#39;).click(function()&#123;</span><br><span class="line">     $.post(&#39;http:&#x2F;&#x2F;localhost:9999&#x2F;getAudioInfo&#39;,&#123;&#125; ,function(data)&#123;</span><br><span class="line">    	 console.log(data)</span><br><span class="line">     &#125;)</span><br><span class="line"> &#125;)</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>recoder.js</p>
+<blockquote>
+<p>在回放方法中将识别的音频流下载下来，后缀名为.wav，并将其保存到本地</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br></pre></td><td class="code"><pre><span class="line">(function (window) &#123;</span><br><span class="line">    &#x2F;&#x2F;兼容</span><br><span class="line">	window.URL &#x3D; window.URL || window.webkitURL;</span><br><span class="line">	navigator.getUserMedia &#x3D; navigator.getUserMedia || 							navigator.webkitGetUserMedia || navigator.mozGetUserMedia || 				navigator.msGetUserMedia;</span><br><span class="line"> </span><br><span class="line">    var HZRecorder &#x3D; function (stream, config) &#123;</span><br><span class="line">        config &#x3D; config || &#123;&#125;;</span><br><span class="line">         &#x2F;&#x2F;采样数位 8, 16</span><br><span class="line">        config.sampleBits &#x3D; config.sampleBits || 16;    </span><br><span class="line">         &#x2F;&#x2F;采样率(1&#x2F;6 44100)</span><br><span class="line">        config.sampleRate &#x3D; config.sampleRate || (16000);  </span><br><span class="line">        </span><br><span class="line">        var context &#x3D; new AudioContext();</span><br><span class="line">        var audioInput &#x3D; context.createMediaStreamSource(stream);</span><br><span class="line">        var recorder &#x3D; context.createScriptProcessor(4096, 1, 1);</span><br><span class="line"></span><br><span class="line">        var audioData &#x3D; &#123;</span><br><span class="line">            size: 0          &#x2F;&#x2F;录音文件长度</span><br><span class="line">            , buffer: []     &#x2F;&#x2F;录音缓存</span><br><span class="line">            , inputSampleRate: context.sampleRate    &#x2F;&#x2F;输入采样率</span><br><span class="line">            , inputSampleBits: 16       &#x2F;&#x2F;输入采样数位 8, 16</span><br><span class="line">            , outputSampleRate: config.sampleRate    &#x2F;&#x2F;输出采样率</span><br><span class="line">            , oututSampleBits: config.sampleBits       &#x2F;&#x2F;输出采样数位 8, 16</span><br><span class="line">            , input: function (data) &#123;</span><br><span class="line">				console.log(data)</span><br><span class="line">                this.buffer.push(new Float32Array(data));</span><br><span class="line">                this.size +&#x3D; data.length;</span><br><span class="line">            &#125;</span><br><span class="line">            , compress: function () &#123; &#x2F;&#x2F;合并压缩</span><br><span class="line">                &#x2F;&#x2F;合并</span><br><span class="line">                var data &#x3D; new Float32Array(this.size);</span><br><span class="line">                var offset &#x3D; 0;</span><br><span class="line">                for (var i &#x3D; 0; i &lt; this.buffer.length; i++) &#123;</span><br><span class="line">                    data.set(this.buffer[i], offset);</span><br><span class="line">                    offset +&#x3D; this.buffer[i].length;</span><br><span class="line">                &#125;</span><br><span class="line">                &#x2F;&#x2F;压缩</span><br><span class="line">                var compression &#x3D; parseInt(this.inputSampleRate &#x2F; this.outputSampleRate);</span><br><span class="line">                var length &#x3D; data.length &#x2F; compression;</span><br><span class="line">                var result &#x3D; new Float32Array(length);</span><br><span class="line">                var index &#x3D; 0, j &#x3D; 0;</span><br><span class="line">                while (index &lt; length) &#123;</span><br><span class="line">                    result[index] &#x3D; data[j];</span><br><span class="line">                    j +&#x3D; compression;</span><br><span class="line">                    index++;</span><br><span class="line">                &#125;</span><br><span class="line">                return result;</span><br><span class="line">            &#125;</span><br><span class="line">            , encodeWAV: function () &#123;</span><br><span class="line">                var sampleRate &#x3D; Math.min(this.inputSampleRate, this.outputSampleRate);</span><br><span class="line">                var sampleBits &#x3D; Math.min(this.inputSampleBits, this.oututSampleBits);</span><br><span class="line">                var bytes &#x3D; this.compress();</span><br><span class="line">                var dataLength &#x3D; bytes.length * (sampleBits &#x2F; 8);</span><br><span class="line">                var buffer &#x3D; new ArrayBuffer(44 + dataLength);</span><br><span class="line">                var data &#x3D; new DataView(buffer);</span><br><span class="line"></span><br><span class="line">                var channelCount &#x3D; 1;&#x2F;&#x2F;单声道</span><br><span class="line">                var offset &#x3D; 0;</span><br><span class="line"></span><br><span class="line">                var writeString &#x3D; function (str) &#123;</span><br><span class="line">                    for (var i &#x3D; 0; i &lt; str.length; i++) &#123;</span><br><span class="line">                        data.setUint8(offset + i, str.charCodeAt(i));</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                &#x2F;&#x2F; 资源交换文件标识符 </span><br><span class="line">                writeString(&#39;RIFF&#39;); offset +&#x3D; 4;</span><br><span class="line">                &#x2F;&#x2F; 下个地址开始到文件尾总字节数,即文件大小-8 </span><br><span class="line">                data.setUint32(offset, 36 + dataLength, true); offset +&#x3D; 4;</span><br><span class="line">                &#x2F;&#x2F; WAV文件标志</span><br><span class="line">                writeString(&#39;WAVE&#39;); offset +&#x3D; 4;</span><br><span class="line">                &#x2F;&#x2F; 波形格式标志 </span><br><span class="line">                writeString(&#39;fmt &#39;); offset +&#x3D; 4;</span><br><span class="line">                &#x2F;&#x2F; 过滤字节,一般为 0x10 &#x3D; 16 </span><br><span class="line">                data.setUint32(offset, 16, true); offset +&#x3D; 4;</span><br><span class="line">                &#x2F;&#x2F; 格式类别 (PCM形式采样数据) </span><br><span class="line">                data.setUint16(offset, 1, true); offset +&#x3D; 2;</span><br><span class="line">                &#x2F;&#x2F; 通道数 </span><br><span class="line">                data.setUint16(offset, channelCount, true); offset +&#x3D; 2;</span><br><span class="line">                &#x2F;&#x2F; 采样率,每秒样本数,表示每个通道的播放速度 </span><br><span class="line">                data.setUint32(offset, sampleRate, true); offset +&#x3D; 4;</span><br><span class="line">                &#x2F;&#x2F; 波形数据传输率 (每秒平均字节数) 单声道×每秒数据位数×每样本数据位&#x2F;8 </span><br><span class="line">                data.setUint32(offset, channelCount * sampleRate * (sampleBits &#x2F; 8), true); offset +&#x3D; 4;</span><br><span class="line">                &#x2F;&#x2F; 快数据调整数 采样一次占用字节数 单声道×每样本的数据位数&#x2F;8 </span><br><span class="line">                data.setUint16(offset, channelCount * (sampleBits &#x2F; 8), true); offset +&#x3D; 2;</span><br><span class="line">                &#x2F;&#x2F; 每样本数据位数 </span><br><span class="line">                data.setUint16(offset, sampleBits, true); offset +&#x3D; 2;</span><br><span class="line">                &#x2F;&#x2F; 数据标识符 </span><br><span class="line">                writeString(&#39;data&#39;); offset +&#x3D; 4;</span><br><span class="line">                &#x2F;&#x2F; 采样数据总数,即数据总大小-44 </span><br><span class="line">                data.setUint32(offset, dataLength, true); offset +&#x3D; 4;</span><br><span class="line">                &#x2F;&#x2F; 写入采样数据 </span><br><span class="line">                if (sampleBits &#x3D;&#x3D;&#x3D; 8) &#123;</span><br><span class="line">                    for (var i &#x3D; 0; i &lt; bytes.length; i++, offset++) &#123;</span><br><span class="line">                        var s &#x3D; Math.max(-1, Math.min(1, bytes[i]));</span><br><span class="line">                        var val &#x3D; s &lt; 0 ? s * 0x8000 : s * 0x7FFF;</span><br><span class="line">                        val &#x3D; parseInt(255 &#x2F; (65535 &#x2F; (val + 32768)));</span><br><span class="line">                        data.setInt8(offset, val, true);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    for (var i &#x3D; 0; i &lt; bytes.length; i++, offset +&#x3D; 2) &#123;</span><br><span class="line">                        var s &#x3D; Math.max(-1, Math.min(1, bytes[i]));</span><br><span class="line">                        data.setInt16(offset, s &lt; 0 ? s * 0x8000 : s * 0x7FFF, true);</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">                 return new Blob([data], &#123; type: &#39;audio&#x2F;wav&#39; &#125;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">        &#x2F;&#x2F;开始录音</span><br><span class="line">        this.start &#x3D; function () &#123;</span><br><span class="line">            audioInput.connect(recorder);</span><br><span class="line">            recorder.connect(context.destination);</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">        &#x2F;&#x2F;停止</span><br><span class="line">        this.stop &#x3D; function () &#123;</span><br><span class="line">            recorder.disconnect();</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">        &#x2F;&#x2F;获取音频文件</span><br><span class="line">        this.getBlob &#x3D; function () &#123;</span><br><span class="line">            this.stop();</span><br><span class="line">            return audioData.encodeWAV();</span><br><span class="line">        &#125;</span><br><span class="line">		</span><br><span class="line"> </span><br><span class="line">        &#x2F;&#x2F;回放</span><br><span class="line">        this.play &#x3D; function (audio) &#123;</span><br><span class="line">			if(&#39;msSaveOrOpenBlob&#39; in navigator)&#123;</span><br><span class="line">				window.navigator.msSaveOrOpenBlob(res.data, new Date().toISOString() +&#39;.wav&#39;);</span><br><span class="line">			&#125;</span><br><span class="line">			var url &#x3D; window.URL.createObjectURL(this.getBlob());</span><br><span class="line">			&#x2F;&#x2F;audio标签路径</span><br><span class="line">            audio.src &#x3D;  url;  </span><br><span class="line">            &#x2F;&#x2F;创建a标签</span><br><span class="line">			let a &#x3D; document.createElement(&#39;a&#39;);</span><br><span class="line">			a.setAttribute(&quot;href&quot;,url);</span><br><span class="line">			&#x2F;&#x2F;利用a标签download属性来下载文件</span><br><span class="line">			a.setAttribute(&quot;download&quot;, new Date().toISOString() +&#39;.wav&#39;);</span><br><span class="line">			a.click();	</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line">        &#x2F;&#x2F;音频采集</span><br><span class="line">        recorder.onaudioprocess &#x3D; function (e) &#123;</span><br><span class="line">            audioData.input(e.inputBuffer.getChannelData(0));</span><br><span class="line">        &#125;</span><br><span class="line"> </span><br><span class="line"> </span><br><span class="line">    &#125;;</span><br><span class="line">    &#x2F;&#x2F;抛出异常</span><br><span class="line">    HZRecorder.throwError &#x3D; function (message) &#123;</span><br><span class="line">        alert(message);</span><br><span class="line">        throw new function () &#123; this.toString &#x3D; function () &#123; return message; &#125; &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;是否支持录音</span><br><span class="line">    HZRecorder.canRecording &#x3D; (navigator.getUserMedia !&#x3D; null);</span><br><span class="line">    &#x2F;&#x2F;获取录音机</span><br><span class="line">    HZRecorder.get &#x3D; function (callback, config) &#123;</span><br><span class="line">        if (callback) &#123;</span><br><span class="line">            if (navigator.getUserMedia) &#123;</span><br><span class="line">                navigator.getUserMedia(</span><br><span class="line">                    &#123; audio: true &#125; &#x2F;&#x2F;只启用音频</span><br><span class="line">                    , function (stream) &#123;</span><br><span class="line">                        var rec &#x3D; new HZRecorder(stream, config);</span><br><span class="line">                        callback(rec);</span><br><span class="line">                    &#125;</span><br><span class="line">                    , function (error) &#123;</span><br><span class="line">						console.log(error);</span><br><span class="line">                        switch (error.code || error.name) &#123;</span><br><span class="line">                            case &#39;PERMISSION_DENIED&#39;:</span><br><span class="line">                            case &#39;PermissionDeniedError&#39;:</span><br><span class="line">								alert(&#39;用户拒绝提供信息。&#39;)</span><br><span class="line">                                &#x2F;&#x2F;HZRecorder.throwError(&#39;用户拒绝提供信息。&#39;);</span><br><span class="line">                                break;</span><br><span class="line">                            case &#39;NOT_SUPPORTED_ERROR&#39;:</span><br><span class="line">                            case &#39;NotSupportedError&#39;:</span><br><span class="line">								alert(&#39;浏览器不支持硬件设备。&#39;)</span><br><span class="line">                                &#x2F;&#x2F;HZRecorder.throwError(&#39;浏览器不支持硬件设备。&#39;);</span><br><span class="line">                                break;</span><br><span class="line">                            case &#39;MANDATORY_UNSATISFIED_ERROR&#39;:</span><br><span class="line">                            case &#39;MandatoryUnsatisfiedError&#39;:</span><br><span class="line">								alert(&#39;无法发现指定的硬件设备。&#39;)</span><br><span class="line">                                &#x2F;&#x2F;HZRecorder.throwError(&#39;无法发现指定的硬件设备。&#39;);</span><br><span class="line">                                break;</span><br><span class="line">                            default:</span><br><span class="line">								alert(&#39;无法打开麦克风。&#39;)</span><br><span class="line">                                &#x2F;&#x2F;HZRecorder.throwError(&#39;无法打开麦克风。异常信息:&#39; + (error.code || error.name));</span><br><span class="line">                                break;</span><br><span class="line">                        &#125;</span><br><span class="line">                    &#125;);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">				alert(&#39;当前浏览器不支持录音功能。&#39;)</span><br><span class="line">                &#x2F;&#x2F;HZRecorder.throwErr(&#39;当前浏览器不支持录音功能。&#39;); return;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    window.HZRecorder &#x3D; HZRecorder; </span><br><span class="line">    </span><br><span class="line">&#125;)(window);</span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h6 id="nodejs"><a href="#nodejs" class="headerlink" title="nodejs"></a>nodejs</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;node 模块</span><br><span class="line">const express &#x3D; require(&#39;express&#39;)</span><br><span class="line">const app &#x3D; express()</span><br><span class="line">&#x2F;&#x2F;中间件</span><br><span class="line">var bodyParser&#x3D; require(&#39;body-parser&#39;);</span><br><span class="line">app.use(bodyParser.urlencoded(&#123;extended:false&#125;))</span><br><span class="line">&#x2F;&#x2F;请求</span><br><span class="line">const request &#x3D; require(&#39;request&#39;);</span><br><span class="line">&#x2F;&#x2F;语音文件</span><br><span class="line">const fs &#x3D; require(&#39;fs&#39;);</span><br><span class="line">&#x2F;&#x2F;阿里云语音模块</span><br><span class="line">var RPCClient &#x3D; require(&#39;@alicloud&#x2F;pop-core&#39;).RPCClient;</span><br><span class="line"></span><br><span class="line">app.all(&quot;*&quot;, function (req, res, next) &#123;</span><br><span class="line">    &#x2F;&#x2F;设置允许跨域的域名，*代表允许任意域名跨域</span><br><span class="line">    res.header(&quot;Access-Control-Allow-Origin&quot;, &quot;*&quot;);</span><br><span class="line">    &#x2F;&#x2F;允许的header类型</span><br><span class="line">    res.header(&quot;Access-Control-Allow-Headers&quot;, &quot;content-type&quot;);</span><br><span class="line">    &#x2F;&#x2F;跨域允许的请求方式 </span><br><span class="line">    res.header(&quot;Access-Control-Allow-Methods&quot;, &quot;DELETE,PUT,POST,GET,OPTIONS&quot;);</span><br><span class="line">    if (req.method.toLowerCase() &#x3D;&#x3D; &#39;options&#39;)</span><br><span class="line">        res.send(200); &#x2F;&#x2F;让options尝试请求快速结束</span><br><span class="line">    else</span><br><span class="line">        next();</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">&#x2F;*</span><br><span class="line">状态码描述</span><br><span class="line">接口请求成功</span><br><span class="line">	1 返回识别结果</span><br><span class="line">	2 语音识别失败</span><br><span class="line">其余除单数以外状态码</span><br><span class="line">	接口请求失败</span><br><span class="line">3 读取音频文件失败</span><br><span class="line">4 token 获取失败</span><br><span class="line">5 请求接口返回错误语</span><br><span class="line">*&#x2F;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;前端请求</span><br><span class="line">var data &#x3D; null;</span><br><span class="line"></span><br><span class="line">app.post(&#39;&#x2F;getAudioInfo&#39;, function(req, res)&#123;</span><br><span class="line">  res.send(data);</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;请求参数</span><br><span class="line">var appkey &#x3D; &#39;g0IXmKkXyorfskOl&#39;;</span><br><span class="line">var url &#x3D; &#39;http:&#x2F;&#x2F;nls-gateway.cn-shanghai.aliyuncs.com&#x2F;stream&#x2F;v1&#x2F;asr&#39;;</span><br><span class="line">var audioFile &#x3D; &#39;.&#x2F;audio&#x2F;2021-10-11T06_30_22.230Z.wav&#39;;&#x2F;&#x2F;必须是采样率16KHZ的音频文件</span><br><span class="line">var requestUrl &#x3D; url + &#39;?appkey&#x3D;&#39; + appkey;</span><br><span class="line"></span><br><span class="line">&#x2F;*</span><br><span class="line">accessKeyId、accessKeySecret可在该地址获取：</span><br><span class="line">https:&#x2F;&#x2F;ram.console.aliyun.com&#x2F;manage&#x2F;ak?spm&#x3D;a2c4g.11186623.0.0.593d4883rMWyYs</span><br><span class="line">*&#x2F;</span><br><span class="line">&#x2F;&#x2F;获取token</span><br><span class="line">var client &#x3D; new RPCClient(&#123;</span><br><span class="line">  accessKeyId: </span><br><span class="line">  accessKeySecret: </span><br><span class="line">  endpoint: &#39;http:&#x2F;&#x2F;nls-meta.cn-shanghai.aliyuncs.com&#39;,  &#x2F;&#x2F;请求的网址</span><br><span class="line">  apiVersion: &#39;2019-02-28&#39;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">client.request(&#39;CreateToken&#39;).then((result) &#x3D;&gt; &#123;</span><br><span class="line">	if(result.ErrMsg &#x3D;&#x3D; &#39;&#39;)&#123;</span><br><span class="line">		var token &#x3D; result.Token.Id;  &#x2F;&#x2F;返回token</span><br><span class="line">		process(requestUrl, token, audioFile);  &#x2F;&#x2F;调用读取音频文件</span><br><span class="line">	&#125;else &#123;</span><br><span class="line">		data &#x3D; &#123;</span><br><span class="line">			code: 4,</span><br><span class="line">			result: result.ErrMsg</span><br><span class="line">		&#125;;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;读音频文件</span><br><span class="line">function process(requestUrl, token, audioFile) &#123;</span><br><span class="line">    var audioContent &#x3D; null;</span><br><span class="line">    try &#123;</span><br><span class="line">        audioContent &#x3D; fs.readFileSync(audioFile);</span><br><span class="line">    &#125; catch (error) &#123;</span><br><span class="line">        if (error.code &#x3D;&#x3D; &#39;ENOENT&#39;) &#123;</span><br><span class="line">			data &#x3D; &#123;</span><br><span class="line">				code: 3,</span><br><span class="line">				result: &#39;文件不存在!&#39;</span><br><span class="line">			&#125;;</span><br><span class="line">        &#125;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line">    var options &#x3D; &#123;</span><br><span class="line">        url: requestUrl,</span><br><span class="line">        method: &#39;POST&#39;,</span><br><span class="line">        headers: &#123;</span><br><span class="line">            &#39;X-NLS-Token&#39;: token,</span><br><span class="line">            &#39;Content-type&#39;: &#39;application&#x2F;octet-stream&#39;,</span><br><span class="line">            &#39;Content-Length&#39;: audioContent.length</span><br><span class="line">        &#125;,</span><br><span class="line">        body: audioContent</span><br><span class="line">    &#125;;</span><br><span class="line">    request(options, function callback(error, response, body) &#123;</span><br><span class="line">    if (error !&#x3D; null) &#123;</span><br><span class="line">		data &#x3D; &#123;</span><br><span class="line">			code: 5,</span><br><span class="line">			result: error</span><br><span class="line">		&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    else &#123;</span><br><span class="line">        if (response.statusCode &#x3D;&#x3D; 200) &#123;</span><br><span class="line">            body &#x3D; JSON.parse(body);</span><br><span class="line">            if (body.status &#x3D;&#x3D; 20000000) &#123;</span><br><span class="line">				data &#x3D; &#123;</span><br><span class="line">					code: 1,</span><br><span class="line">					result: body.result</span><br><span class="line">				&#125;;</span><br><span class="line">				console.log(body.result);</span><br><span class="line">            &#125; else &#123;</span><br><span class="line">				data &#x3D; &#123;</span><br><span class="line">					code: 2,</span><br><span class="line">					result: &#39;识别失败!&#39;</span><br><span class="line">				&#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">			data &#x3D; &#123;</span><br><span class="line">				code: response.statusCode,</span><br><span class="line">				result: &#39;识别失败!&#39;</span><br><span class="line">			&#125;;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">	</span><br><span class="line">&#125;);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">app.listen(9999, function()&#123;&#39;server start success...&#39;&#125;);</span><br></pre></td></tr></table></figure>
+
+
+
+<h5 id="使用前端-nodejs-百度云语音识别apk"><a href="#使用前端-nodejs-百度云语音识别apk" class="headerlink" title="使用前端+nodejs+百度云语音识别apk"></a>使用前端+nodejs+百度云语音识别apk</h5><blockquote>
+<p>百度云使用websocket请求方式，进行前端与nodejs交互</p>
+</blockquote>
+<h6 id="html-1"><a href="#html-1" class="headerlink" title="html"></a>html</h6><blockquote>
+<p>与阿里云dom结构相同</p>
+</blockquote>
+<h6 id="js-1"><a href="#js-1" class="headerlink" title="js"></a>js</h6><blockquote>
+<p>这次与后台交互使用websocket</p>
+<p>所以只描述回放部分的代码</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">this.play &#x3D; function (audio) &#123;</span><br><span class="line">	&#x2F;&#x2F;是否具有保存并打开blob的方法</span><br><span class="line">    if(&#39;msSaveOrOpenBlob&#39; in navigator)&#123;</span><br><span class="line">        window.navigator.msSaveOrOpenBlob(res.data, new Date().toISOString() 	+&#39;.wav&#39;);</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;audio标签属性赋值</span><br><span class="line">    audio.src &#x3D; window.URL.createObjectURL(this.getBlob());</span><br><span class="line">    &#x2F;&#x2F;websock的连接地址</span><br><span class="line">    var ws &#x3D; new WebSocket(&quot;ws:&#x2F;&#x2F;localhost:8181&quot;);</span><br><span class="line">    &#x2F;&#x2F;建立ws连接</span><br><span class="line">    ws.onopen &#x3D; () &#x3D;&gt;&#123;</span><br><span class="line">        console.log(&#39;Connection to server opened&#39;);</span><br><span class="line">        &#x2F;&#x2F;发送该音频流</span><br><span class="line">        ws.send(this.getBlob())</span><br><span class="line">    &#125;</span><br><span class="line">    &#x2F;&#x2F;获取ws信息</span><br><span class="line">    ws.onmessage &#x3D; function(e)&#123;</span><br><span class="line">        var result_data &#x3D; JSON.parse(e.data);</span><br><span class="line">        if(result_data.err_no &#x3D;&#x3D; 0)&#123;</span><br><span class="line">        	&#x2F;&#x2F;返回信息成功</span><br><span class="line">        &#125;else &#123;</span><br><span class="line">        	&#x2F;&#x2F;出错</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ws.onerror &#x3D; function()&#123;</span><br><span class="line">    	&#x2F;&#x2F;console.log(&quot;连接出错&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ws.onclose &#x3D; function(e)&#123;</span><br><span class="line">    	&#x2F;&#x2F;console.log(&quot;服务器关闭&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h6 id="nodejs-1"><a href="#nodejs-1" class="headerlink" title="nodejs"></a>nodejs</h6><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">&#x2F;&#x2F;百度云 语音识别api</span><br><span class="line">let AipSpeech &#x3D; require(&quot;baidu-aip-sdk&quot;).speech;  </span><br><span class="line">&#x2F;&#x2F;创建ws服务</span><br><span class="line">let Server &#x3D; require(&#39;ws&#39;).Server;</span><br><span class="line">&#x2F;&#x2F;端口</span><br><span class="line">const wss &#x3D; new Server(&#123;</span><br><span class="line">    port: 8181</span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">let resTxt;</span><br><span class="line">&#x2F;&#x2F;ws连接</span><br><span class="line">wss.on(&#39;connection&#39;, ws &#x3D;&gt; &#123;</span><br><span class="line">    console.log(&#39;server connected&#39;);</span><br><span class="line">    ws.on(&#39;message&#39;, data &#x3D;&gt; &#123;</span><br><span class="line">        console.log(&#39;server recived audio blob&#39;);</span><br><span class="line">        &#x2F;&#x2F; 务必替换百度云控制台中新建百度语音应用的 Api Key 和 Secret Key</span><br><span class="line">        let client &#x3D; new AipSpeech(0, &#39;Api Key&#39;, &#39;Secret Key&#39;);</span><br><span class="line">        let voiceBase64 &#x3D; new Buffer(data);</span><br><span class="line">        client.recognize(voiceBase64, &#39;wav&#39;, 16000).then(function(result) &#123;</span><br><span class="line">            resTxt &#x3D; JSON.stringify(result);</span><br><span class="line">			if(resTxt)&#123;</span><br><span class="line">			&#x2F;&#x2F; 将结果传给前端</span><br><span class="line">				ws.send(resTxt);</span><br><span class="line">			&#125;</span><br><span class="line">        &#125;, function(err) &#123;</span><br><span class="line">            console.log(err);</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;)</span><br><span class="line">	</span><br><span class="line">	</span><br><span class="line">	&#x2F;&#x2F;报错提示信息</span><br><span class="line">    ws.on(&#39;error&#39;, error &#x3D;&gt; &#123;</span><br><span class="line">        console.log(&#39;Error:&#39; + error);</span><br><span class="line">    &#125;)</span><br><span class="line">    &#x2F;&#x2F;关闭连接提示信息</span><br><span class="line">    ws.on(&#39;close&#39;, () &#x3D;&gt; &#123;</span><br><span class="line">        console.log(&#39;Websocket is closed&#39;);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br><span class="line">&#x2F;&#x2F;断开连接提示信息</span><br><span class="line">wss.on(&#39;disconnection&#39;, ws &#x3D;&gt; &#123;</span><br><span class="line">    ws.on(&#39;message&#39;, msg &#x3D;&gt; &#123;</span><br><span class="line">        console.log(&#39;server recived msg:&#39; + msg);</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+
+
+
+
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>SanEr
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2021/11/09/%E8%AF%AD%E9%9F%B3%E8%AF%86%E5%88%AB/" title="语音识别">http://yoursite.com/2021/11/09/语音识别/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%EF%BC%8C%E5%B7%A5%E5%85%B7%E7%B1%BB/" rel="tag"># 学习，工具类</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/16/%E5%90%8E%E5%8F%B0%E7%AE%A1%E7%90%86%E7%B3%BB%E7%BB%9F/" rel="prev" title="后台管理系统">
+      <i class="fa fa-chevron-left"></i> 后台管理系统
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#语音识别"><span class="nav-number">1.</span> <span class="nav-text">语音识别</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#使用前端html-nodejs-阿里云语音识别apk"><span class="nav-number">1.1.</span> <span class="nav-text">使用前端html+nodejs+阿里云语音识别apk</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#html"><span class="nav-number">1.1.1.</span> <span class="nav-text">html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#js"><span class="nav-number">1.1.2.</span> <span class="nav-text">js</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#nodejs"><span class="nav-number">1.1.3.</span> <span class="nav-text">nodejs</span></a></li></ol></li><li class="nav-item nav-level-5"><a class="nav-link" href="#使用前端-nodejs-百度云语音识别apk"><span class="nav-number">1.2.</span> <span class="nav-text">使用前端+nodejs+百度云语音识别apk</span></a><ol class="nav-child"><li class="nav-item nav-level-6"><a class="nav-link" href="#html-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">html</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#js-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">js</span></a></li><li class="nav-item nav-level-6"><a class="nav-link" href="#nodejs-1"><span class="nav-number">1.2.3.</span> <span class="nav-text">nodejs</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="SanEr"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">SanEr</p>
+  <div class="site-description" itemprop="description">先努力优秀，再大方拥有</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/userSanEr" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;userSanEr" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1274755639@qq.com" title="E-Mail → mailto:1274755639@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+      <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1345789048&auto=1&height=66"></iframe>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">SanEr</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='170' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+      <script type="text/javascript" src="/js/clicklove.js"></script>
+  
+</body>
+</html>

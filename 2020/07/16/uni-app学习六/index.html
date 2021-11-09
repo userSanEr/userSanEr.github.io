@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="关于跨端框架uni-app的总结学习，为了自己日后查看方便同时也希望可以提供给大家一些帮助，此篇主要涉及colorUI、软键盘上移、获取用户位置、获取用户信息。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="uni-app学习六">
+<meta property="og:url" content="http://yoursite.com/2020/07/16/uni-app%E5%AD%A6%E4%B9%A0%E5%85%AD/index.html">
+<meta property="og:site_name" content="SanEr&#39;s Blog">
+<meta property="og:description" content="关于跨端框架uni-app的总结学习，为了自己日后查看方便同时也希望可以提供给大家一些帮助，此篇主要涉及colorUI、软键盘上移、获取用户位置、获取用户信息。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200512173303704.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMxNjc2NzI1,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20200512173544855.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMxNjc2NzI1,size_16,color_FFFFFF,t_70">
+<meta property="article:published_time" content="2020-07-16T11:34:11.000Z">
+<meta property="article:modified_time" content="2020-07-17T11:11:01.000Z">
+<meta property="article:author" content="SanEr">
+<meta property="article:tag" content="学习，uni-app">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img-blog.csdnimg.cn/20200512173303704.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMxNjc2NzI1,size_16,color_FFFFFF,t_70">
+
+<link rel="canonical" href="http://yoursite.com/2020/07/16/uni-app%E5%AD%A6%E4%B9%A0%E5%85%AD/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>uni-app学习六 | SanEr's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">SanEr's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/userSanEr" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/16/uni-app%E5%AD%A6%E4%B9%A0%E5%85%AD/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="SanEr">
+      <meta itemprop="description" content="先努力优秀，再大方拥有">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="SanEr's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          uni-app学习六
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-16 19:34:11" itemprop="dateCreated datePublished" datetime="2020-07-16T19:34:11+08:00">2020-07-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-17 19:11:01" itemprop="dateModified" datetime="2020-07-17T19:11:01+08:00">2020-07-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/uniapp/" itemprop="url" rel="index"><span itemprop="name">uniapp</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>关于跨端框架uni-app的总结学习，为了自己日后查看方便同时也希望可以提供给大家一些帮助，此篇主要涉及colorUI、软键盘上移、获取用户位置、获取用户信息。</p>
+<a id="more"></a>
+
+<h4 id="1、摸鱼唠嗑"><a href="#1、摸鱼唠嗑" class="headerlink" title="1、摸鱼唠嗑"></a>1、摸鱼唠嗑</h4><h5 id="1-1-加载中的loading框"><a href="#1-1-加载中的loading框" class="headerlink" title="1.1 加载中的loading框"></a>1.1 加载中的loading框</h5><p>之前做项目的时候太着急就没做请求时加载的动画效果，今天看官网的时候突然发现有自带的api组件，用的还不错，</p>
+<p>但是官网也有大写的注意：</p>
+<p><code>showToast</code> 和 <code>showLoading</code> 是底层同一个（按的小程序的设计），所以 <code>showToast</code> 和 <code>showLoading</code> 会相互覆盖，而 <code>hideLoading</code> 也会关闭 <code>showToast</code>,</p>
+<p>解决办法：就是尽量使用其中一个就可以了，避免同时使用</p>
+<h5 id="1-2-仿vue-router的组件"><a href="#1-2-仿vue-router的组件" class="headerlink" title="1.2 仿vue-router的组件"></a>1.2 仿vue-router的组件</h5><p><a href="https://user-gold-cdn.xitu.io/2019/8/8/16c704ff28803df5" target="_blank" rel="noopener">移步大佬的插件地址</a></p>
+<h5 id="1-3-colorUI组件"><a href="#1-3-colorUI组件" class="headerlink" title="1.3 colorUI组件"></a>1.3 colorUI组件</h5><p>界面真的是十分好看，作为一个女生来说爱了，具体组件可以到官网进行下载，<a href="https://www.color-ui.com" target="_blank" rel="noopener">地址</a></p>
+<p>colorUI还提供了活跃的群文件：<a href="https://www.yuque.com/colorui" target="_blank" rel="noopener">https://www.yuque.com/colorui</a></p>
+<h4 id="2、踩坑日记"><a href="#2、踩坑日记" class="headerlink" title="2、踩坑日记"></a>2、踩坑日记</h4><h5 id="2-1-uni-app微信端上传体验版"><a href="#2-1-uni-app微信端上传体验版" class="headerlink" title="2.1 uni-app微信端上传体验版"></a>2.1 uni-app微信端上传体验版</h5><ul>
+<li>只要是上传都会校验端口号，看到很多说可以开启手机端调试，就是在使用小程序的时候可以看到页面的右上方有三个圆点，点击一下就会弹出一个底部的浮窗，选择开发调试就可以，但是我自己没有测试过，只是提供参考</li>
+<li>记得添加白名单，刷新一下项目配置</li>
+<li>不过这个特别容易出现微信缓存，测试的时候以为自己错了，研究半天换个手机就好了，我太难了</li>
+</ul>
+<h5 id="2-2-软键盘上移页面变形"><a href="#2-2-软键盘上移页面变形" class="headerlink" title="2.2 软键盘上移页面变形"></a>2.2 软键盘上移页面变形</h5><p>这个解决办法挺多的但是要看哪种比较适用了，以下举例：</p>
+<p>1、具体思路：就是获取当前手机屏幕高度，然后当手机屏幕高度发生变化时与手机屏幕高度进行比较，如果小于则将底部按钮隐藏，大于再恢复</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">uni.getSystemInfo(&#123;  &#x2F;&#x2F;这里调用小程序获取系统信息</span><br><span class="line">    success: (res)&#x3D;&gt; &#123;</span><br><span class="line">    	this.windowHeight &#x3D; res.windowHeight;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);   </span><br><span class="line">uni.onWindowResize((res) &#x3D;&gt; &#123;  &#x2F;&#x2F;小程序api</span><br><span class="line">    if(res.size.windowHeight &lt; this.windowHeight)&#123;</span><br><span class="line">    	this.isShowFlag &#x3D; false;</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">    	this.isShowFlag &#x3D; true;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<p>弊端：底部按钮在消失之前会屏幕闪动一下</p>
+<p>2、具体思路：在输入框获取焦点时，将底部定位使用position:static,再失去焦点时，将底部定位使用position:absoluted/fixed</p>
+<p>弊端：就是使用static的时候如果页面的内容如果高度不够的话可能就会看见底部的内容</p>
+<p>3、两种思路的实现方法相差不多，这里贴出第一种的代码，但是各有弊端，还有其他的思路，还是要根据自己的情况而定，大家酌情使用。</p>
+<h5 id="2-3-改变引入的富文本的样式"><a href="#2-3-改变引入的富文本的样式" class="headerlink" title="2.3 改变引入的富文本的样式"></a>2.3 改变引入的富文本的样式</h5><p>只有在全局里改变才会做用到样式，局部改变是不起作用的。</p>
+<h5 id="2-4-使用uni-showToast下方函数执行太快造成toast没有显示"><a href="#2-4-使用uni-showToast下方函数执行太快造成toast没有显示" class="headerlink" title="2.4 使用uni.showToast下方函数执行太快造成toast没有显示"></a>2.4 使用uni.showToast下方函数执行太快造成toast没有显示</h5><p>要将即将执行的函数放入定时器中进行执行，并且要记得改变this指向或者直接使用箭头函数</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">uni.showToast(&#123;</span><br><span class="line">    title: title,  </span><br><span class="line">    icon: &quot;none&quot;</span><br><span class="line">&#125;); </span><br><span class="line">setTimeout(function()&#123;</span><br><span class="line">	that.getchartCode();</span><br><span class="line">&#125;,2000)</span><br></pre></td></tr></table></figure>
+
+<h4 id="3、api使用"><a href="#3、api使用" class="headerlink" title="3、api使用"></a>3、api使用</h4><h5 id="3-1-uni-app微信小程序端获取用户位置"><a href="#3-1-uni-app微信小程序端获取用户位置" class="headerlink" title="3.1 uni-app微信小程序端获取用户位置"></a>3.1 uni-app微信小程序端获取用户位置</h5><blockquote>
+<p>微信小程序提供给我们的获取位置的api有两种，<a href="https://uniapp.dcloud.io/api/location/location?id=getlocation" target="_blank" rel="noopener">获取经纬度</a>，<a href="https://uniapp.dcloud.io/api/location/location?id=chooselocation" target="_blank" rel="noopener">可以选择地区然后获取具体位置</a></p>
+<p>但是在项目中我需要使用详细位置而不是经纬度，也不是选择之后获取的位置，所以需要引入第三方地图的sdk</p>
+<p>我这里使用高德，主要就是需要注册一个key来供我们使用，其余并不复杂，<a href="https://ask.dcloud.net.cn/article/35070" target="_blank" rel="noopener">参考示例</a></p>
+</blockquote>
+<p><img src="https://img-blog.csdnimg.cn/20200512173303704.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMxNjc2NzI1,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p><img src="https://img-blog.csdnimg.cn/20200512173544855.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzMxNjc2NzI1,size_16,color_FFFFFF,t_70" alt="img"></p>
+<blockquote>
+<p>根据参考示例以及图示基本可以完成key值得获取了</p>
+<p>接下来就上代码</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">&lt;text style&#x3D;&quot;color: #9B9B9B;&quot;&gt;&#123;&#123;Areaaddress&#125;&#125;&lt;&#x2F;text&gt;</span><br><span class="line"></span><br><span class="line">import amap from &#39;..&#x2F;..&#x2F;common&#x2F;amap-wx.js&#39;</span><br><span class="line"></span><br><span class="line">&#x2F;&#x2F;1. uniapp弹窗弹出获取授权（地理，个人微信信息等授权信息）弹窗</span><br><span class="line">getAuthorizeInfo(a&#x3D;&quot;scope.userLocation&quot;)&#123;  </span><br><span class="line">    var _this&#x3D;this;</span><br><span class="line">    uni.authorize(&#123;</span><br><span class="line">        scope: a,</span><br><span class="line">        success() &#123; &#x2F;&#x2F;1.1 允许授权</span><br><span class="line">        	_this.getLocationInfo();</span><br><span class="line">        &#125;,</span><br><span class="line">        fail()&#123;    &#x2F;&#x2F;1.2 拒绝授权</span><br><span class="line">            uni.showToast(&#123;</span><br><span class="line">                title: &quot;你拒绝了授权，无法获得周边信息&quot;,  </span><br><span class="line">                icon: &quot;none&quot;</span><br><span class="line">            &#125;); </span><br><span class="line">        &#125;</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;,</span><br><span class="line">&#x2F;&#x2F;2. 获取地理位置</span><br><span class="line">getLocationInfo()&#123;  </span><br><span class="line">    var _this&#x3D;this;</span><br><span class="line">    uni.getLocation(&#123;</span><br><span class="line">        type: &#39;gcj02&#39;,</span><br><span class="line">        success (res) &#123;</span><br><span class="line">            _this.latitude &#x3D; res.latitude.toString();  &#x2F;&#x2F;纬度</span><br><span class="line">            _this.longitude &#x3D; res.longitude.toString();</span><br><span class="line">            _this.loadCity(_this.latitude ,_this.longitude);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;,</span><br><span class="line">&#x2F;&#x2F;获取精确位置</span><br><span class="line">loadCity: function (latitude, longitude) &#123;</span><br><span class="line">    var that &#x3D; this;</span><br><span class="line">    var myAmapFun &#x3D; new amap.AMapWX(&#123; key: that.key &#125;);</span><br><span class="line">    myAmapFun.getRegeo(&#123;</span><br><span class="line">    location: &#39;&#39; + longitude + &#39;,&#39; + latitude + &#39;&#39;,&#x2F;&#x2F;location的格式为&#39;经度,纬度&#39;</span><br><span class="line">    success: function (e) &#123;</span><br><span class="line">        let city,province;</span><br><span class="line">        city&#x3D; e[0].regeocodeData.addressComponent.city;&#x2F;&#x2F;城市</span><br><span class="line">        province&#x3D; e[0].regeocodeData.addressComponent.province;&#x2F;&#x2F;省份</span><br><span class="line">        that.Areaaddress &#x3D; province;</span><br><span class="line">    &#125;,</span><br><span class="line">    fail: function (info) &#123;</span><br><span class="line">        uni.showToast(&#123;</span><br><span class="line">            title: info,  </span><br><span class="line">            icon: &quot;none&quot;</span><br><span class="line">    	&#125;); </span><br><span class="line">    	&#125;</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;,</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-2-uni-app微信小程序端获取用户信息"><a href="#3-2-uni-app微信小程序端获取用户信息" class="headerlink" title="3.2 uni-app微信小程序端获取用户信息"></a>3.2 uni-app微信小程序端获取用户信息</h5><p>获取用户信息必须手动授权，不可以在直接授权</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">	&lt;view class&#x3D;&quot;content&quot;&gt;</span><br><span class="line">		&lt;button open-type&#x3D;&quot;getUserInfo&quot; @getuserinfo&#x3D;&quot;getuserinfo&quot;&gt;登录&lt;&#x2F;button&gt;</span><br><span class="line">		&lt;!-- 用户信息模块 --&gt;</span><br><span class="line">			&lt;view class&#x3D;&quot;userBox&quot;&gt;</span><br><span class="line">				&lt;!-- 昵称 --&gt;</span><br><span class="line">				&lt;text class&#x3D;&quot;nickName&quot;&gt;&#123;&#123;nickNames&#125;&#125;&lt;&#x2F;text&gt;</span><br><span class="line">				&lt;!-- 头像 --&gt;</span><br><span class="line">				&lt;image class&#x3D;&quot;userIcon&quot; :src&#x3D;&quot;avatarUrl&quot;&gt;&lt;&#x2F;image&gt;</span><br><span class="line">			&lt;&#x2F;view&gt;</span><br><span class="line">	&lt;&#x2F;view&gt;</span><br><span class="line">&lt;&#x2F;template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">	export default &#123;</span><br><span class="line">			data() &#123;</span><br><span class="line">				return &#123;</span><br><span class="line">					nickNames: &#39;匿名用户&#39;,</span><br><span class="line">					avatarUrl: &#39;https:&#x2F;&#x2F;www.189.cn&#x2F;client&#x2F;wap&#x2F;wapclient&#x2F;xingcard&#x2F;images&#x2F;index_avatar.png&#39;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;,</span><br><span class="line">			onLoad() &#123;</span><br><span class="line">				</span><br><span class="line">			&#125;,</span><br><span class="line">			methods:&#123;</span><br><span class="line">				getuserinfo:function()&#123;</span><br><span class="line">					let that &#x3D; this;</span><br><span class="line">					uni.login(&#123;</span><br><span class="line">						provider: &#39;weixin&#39;,</span><br><span class="line">						success: function(loginRes) &#123;</span><br><span class="line">							&#x2F;&#x2F; 获取用户信息</span><br><span class="line">							uni.getUserInfo(&#123;</span><br><span class="line">								provider: &#39;weixin&#39;,</span><br><span class="line">								success: function(infoRes) &#123;</span><br><span class="line">									that._data.nickNames &#x3D; infoRes.userInfo.nickName;</span><br><span class="line">									that._data.avatarUrl &#x3D; infoRes.userInfo.avatarUrl;</span><br><span class="line">								&#125;</span><br><span class="line">							&#125;);</span><br><span class="line">						&#125;</span><br><span class="line">					&#125;);</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line">	</span><br><span class="line">&lt;&#x2F;script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line">	&#x2F;* 用户盒子 *&#x2F;</span><br><span class="line">		.userBox &#123;</span><br><span class="line">			display: flex;</span><br><span class="line">			justify-content: space-between;</span><br><span class="line">			align-items: center;</span><br><span class="line">			padding: 20px;</span><br><span class="line">			background: linear-gradient(to top right, #ffd422  0%, #ffe944 25%, #fff970 100%);</span><br><span class="line">		&#125;</span><br><span class="line">	 </span><br><span class="line">		&#x2F;* 用户昵称 *&#x2F;</span><br><span class="line">		.nickName &#123;</span><br><span class="line">			color: #55240A;</span><br><span class="line">		&#125;</span><br><span class="line">	 </span><br><span class="line">		&#x2F;* 用户头像 *&#x2F;</span><br><span class="line">		.userIcon &#123;</span><br><span class="line">			align-self: flex-end;</span><br><span class="line">			border-radius: 50%;</span><br><span class="line">			overflow: hidden;</span><br><span class="line">			width: 100px;</span><br><span class="line">			height: 100px;</span><br><span class="line">			box-shadow: 0 1px 2px rgba(0, 0, 0, 0.5)</span><br><span class="line">		&#125;</span><br><span class="line">&lt;&#x2F;style&gt;</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-3-省市区联动组件"><a href="#3-3-省市区联动组件" class="headerlink" title="3.3 省市区联动组件"></a>3.3 省市区联动组件</h5><p>这个在ui-app的组件库里面也有丰富的示例供我们挑选就不多做介绍了，在项目中我用的是<a href="https://ext.dcloud.net.cn/plugin?id=1472" target="_blank" rel="noopener">大家可以自行选择</a></p>
+<h5 id="3-4-h5端获取定位信息"><a href="#3-4-h5端获取定位信息" class="headerlink" title="3.4 h5端获取定位信息"></a>3.4 h5端获取定位信息</h5><blockquote>
+<p>搜索了半天看到一个特别麻烦的，真的是无从下手，要是想研究的可以学习一下，<a href="https://blog.csdn.net/qq_31676725/article/details/106080943?utm_medium=distribute.pc_relevant.none-task-blog-baidujs-2" target="_blank" rel="noopener">详见</a></p>
+</blockquote>
+<p>最后使用了一个免费的接口获取地址，免费获取ip的网址特别多，相信大家百度就有，就不多说了。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>SanEr
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2020/07/16/uni-app%E5%AD%A6%E4%B9%A0%E5%85%AD/" title="uni-app学习六">http://yoursite.com/2020/07/16/uni-app学习六/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%EF%BC%8Cuni-app/" rel="tag"># 学习，uni-app</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/16/uni-app%E5%AD%A6%E4%B9%A0%E4%BA%94/" rel="prev" title="uni-app学习五">
+      <i class="fa fa-chevron-left"></i> uni-app学习五
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/16/uni-app%E5%AD%A6%E4%B9%A0%E4%B8%83/" rel="next" title="uni-app学习七">
+      uni-app学习七 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、摸鱼唠嗑"><span class="nav-number">1.</span> <span class="nav-text">1、摸鱼唠嗑</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-加载中的loading框"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 加载中的loading框</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-仿vue-router的组件"><span class="nav-number">1.2.</span> <span class="nav-text">1.2 仿vue-router的组件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-colorUI组件"><span class="nav-number">1.3.</span> <span class="nav-text">1.3 colorUI组件</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、踩坑日记"><span class="nav-number">2.</span> <span class="nav-text">2、踩坑日记</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-uni-app微信端上传体验版"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 uni-app微信端上传体验版</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-软键盘上移页面变形"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 软键盘上移页面变形</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-3-改变引入的富文本的样式"><span class="nav-number">2.3.</span> <span class="nav-text">2.3 改变引入的富文本的样式</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-4-使用uni-showToast下方函数执行太快造成toast没有显示"><span class="nav-number">2.4.</span> <span class="nav-text">2.4 使用uni.showToast下方函数执行太快造成toast没有显示</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、api使用"><span class="nav-number">3.</span> <span class="nav-text">3、api使用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-uni-app微信小程序端获取用户位置"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 uni-app微信小程序端获取用户位置</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-uni-app微信小程序端获取用户信息"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 uni-app微信小程序端获取用户信息</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-3-省市区联动组件"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 省市区联动组件</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-4-h5端获取定位信息"><span class="nav-number">3.4.</span> <span class="nav-text">3.4 h5端获取定位信息</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="SanEr"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">SanEr</p>
+  <div class="site-description" itemprop="description">先努力优秀，再大方拥有</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/userSanEr" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;userSanEr" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1274755639@qq.com" title="E-Mail → mailto:1274755639@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+      <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1345789048&auto=1&height=66"></iframe>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">SanEr</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='170' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+      <script type="text/javascript" src="/js/clicklove.js"></script>
+  
+</body>
+</html>

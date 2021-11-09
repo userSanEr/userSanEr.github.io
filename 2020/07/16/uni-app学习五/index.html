@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.1">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="关于跨端框架uni-app的总结学习，为了自己日后查看方便同时也希望可以提供给大家一些帮助，此篇主要涉及封装方法、打开弹窗禁止滚动、项目源码。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="uni-app学习五">
+<meta property="og:url" content="http://yoursite.com/2020/07/16/uni-app%E5%AD%A6%E4%B9%A0%E4%BA%94/index.html">
+<meta property="og:site_name" content="SanEr&#39;s Blog">
+<meta property="og:description" content="关于跨端框架uni-app的总结学习，为了自己日后查看方便同时也希望可以提供给大家一些帮助，此篇主要涉及封装方法、打开弹窗禁止滚动、项目源码。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-07-16T11:33:59.000Z">
+<meta property="article:modified_time" content="2020-07-17T11:11:01.000Z">
+<meta property="article:author" content="SanEr">
+<meta property="article:tag" content="学习，uni-app">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://yoursite.com/2020/07/16/uni-app%E5%AD%A6%E4%B9%A0%E4%BA%94/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>uni-app学习五 | SanEr's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">SanEr's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+        <li class="menu-item menu-item-commonweal">
+
+    <a href="/404/" rel="section"><i class="fa fa-heartbeat fa-fw"></i>公益</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+  <a href="https://github.com/userSanEr" class="github-corner" title="Follow me on GitHub" aria-label="Follow me on GitHub" rel="noopener" target="_blank"><svg width="80" height="80" viewBox="0 0 250 250" aria-hidden="true"><path d="M0,0 L115,115 L130,115 L142,142 L250,250 L250,0 Z"></path><path d="M128.3,109.0 C113.8,99.7 119.0,89.6 119.0,89.6 C122.0,82.7 120.5,78.6 120.5,78.6 C119.2,72.0 123.4,76.3 123.4,76.3 C127.3,80.9 125.5,87.3 125.5,87.3 C122.9,97.6 130.6,101.9 134.4,103.2" fill="currentColor" style="transform-origin: 130px 106px;" class="octo-arm"></path><path d="M115.0,115.0 C114.9,115.1 118.7,116.5 119.8,115.4 L133.7,101.6 C136.9,99.2 139.9,98.4 142.2,98.6 C133.8,88.0 127.5,74.4 143.8,58.0 C148.5,53.4 154.0,51.2 159.7,51.0 C160.3,49.4 163.2,43.6 171.4,40.1 C171.4,40.1 176.1,42.5 178.8,56.2 C183.1,58.6 187.2,61.8 190.9,65.4 C194.5,69.0 197.7,73.2 200.1,77.6 C213.8,80.2 216.3,84.9 216.3,84.9 C212.7,93.1 206.9,96.0 205.4,96.6 C205.1,102.4 203.0,107.8 198.3,112.5 C181.9,128.9 168.3,122.5 157.7,114.1 C157.9,116.9 156.7,120.9 152.7,124.9 L141.0,136.5 C139.8,137.7 141.6,141.9 141.8,141.8 Z" fill="currentColor" class="octo-body"></path></svg></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/07/16/uni-app%E5%AD%A6%E4%B9%A0%E4%BA%94/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="SanEr">
+      <meta itemprop="description" content="先努力优秀，再大方拥有">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="SanEr's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          uni-app学习五
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-07-16 19:33:59" itemprop="dateCreated datePublished" datetime="2020-07-16T19:33:59+08:00">2020-07-16</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-07-17 19:11:01" itemprop="dateModified" datetime="2020-07-17T19:11:01+08:00">2020-07-17</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/uniapp/" itemprop="url" rel="index"><span itemprop="name">uniapp</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>关于跨端框架uni-app的总结学习，为了自己日后查看方便同时也希望可以提供给大家一些帮助，此篇主要涉及封装方法、打开弹窗禁止滚动、项目源码。</p>
+<a id="more"></a>
+
+<h4 id="1、封装接口以及规范"><a href="#1、封装接口以及规范" class="headerlink" title="1、封装接口以及规范"></a>1、封装接口以及规范</h4><blockquote>
+<p>首先就是所有的页面公用的方法必须要在main.js中引入</p>
+<p>然后挂载到Vue原型链上</p>
+<p>然后就可以在所有的页面通过你挂载的属性名进行引用</p>
+<p>很简单的步骤，相信大家上手都会很快</p>
+</blockquote>
+<h5 id="1-1-请求数据接口封装"><a href="#1-1-请求数据接口封装" class="headerlink" title="1.1 请求数据接口封装"></a>1.1 请求数据接口封装</h5><p>主要是对请求的过程进行一个封装，但是觉得其实还可以多加改善</p>
+<p>params：options接收一个对象，对请求地址、请求方法以及数据进行传参</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line">封装方法：</span><br><span class="line">export const doAjax &#x3D; (options) &#x3D;&gt;&#123;</span><br><span class="line">	return new Promise((resolve,reject)&#x3D;&gt;&#123;</span><br><span class="line">		uni.showLoading(&#123;</span><br><span class="line">		    title: &#39;加载中&#39;</span><br><span class="line">		&#125;);</span><br><span class="line">		uni.request(&#123;</span><br><span class="line">			url:options.url,</span><br><span class="line">			method:options.method || &#39;GET&#39;,</span><br><span class="line">			data:options.data || &#123;&#125;,</span><br><span class="line">			success:(res)&#x3D;&gt;&#123;</span><br><span class="line">				uni.hideLoading();</span><br><span class="line">				resolve(res.data);</span><br><span class="line">			&#125;,</span><br><span class="line">			fail:(err) &#x3D;&gt;&#123;</span><br><span class="line">				uni.showToast(&#123;</span><br><span class="line">					title:&quot;系统繁忙，请稍后再试&quot;  </span><br><span class="line">				&#125;);</span><br><span class="line">				reject(err);</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;;</span><br><span class="line">使用方式：</span><br><span class="line">1、引入</span><br><span class="line">import &#123;doAjax,isPhoneNumber,handleWrap&#125; from &#39;.&#x2F;common&#x2F;util.js&#39;</span><br><span class="line">2、挂载</span><br><span class="line">Vue.prototype.$doAjax &#x3D; doAjax</span><br><span class="line">3、使用</span><br><span class="line">async getchartCode()&#123;</span><br><span class="line">    let param &#x3D; &#123;</span><br><span class="line">        &quot;headerInfo&quot;: &#123; &quot;functionCode&quot;: &quot;getPicRandomCode&quot;&#125;,</span><br><span class="line">        &quot;requestContent&quot;:&#123;&quot;sessionid&quot;:this.pageData.sessionid || &quot;&quot;&#125;</span><br><span class="line">    &#125;</span><br><span class="line">    const res &#x3D; await this.$doAjax(&#123;</span><br><span class="line">        &#x2F;&#x2F;#ifdef H5</span><br><span class="line">        url: &#39;http:&#x2F;&#x2F;wapapp01.zsc.189.cn&#x2F;wapclient&#x2F;queryAward.do&#39;,  &#x2F;&#x2F;这里分两种方式主要是因为h5跨域问题</span><br><span class="line">        &#x2F;&#x2F;#endif</span><br><span class="line">        &#x2F;&#x2F;#ifndef H5 </span><br><span class="line">        url: &#39;http:&#x2F;&#x2F;wapapp01.zsc.189.cn&#x2F;wapclient&#x2F;queryAward.do&#39;,</span><br><span class="line">        &#x2F;&#x2F;#endif</span><br><span class="line">        method: &#39;POST&#39;,</span><br><span class="line">        data: param</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-2-判断手机号是否符合"><a href="#1-2-判断手机号是否符合" class="headerlink" title="1.2  判断手机号是否符合"></a>1.2  判断手机号是否符合</h5><p>param：obj代表要进行正则判断的手机号码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">封装方法</span><br><span class="line">export const isPhoneNumber &#x3D; (obj) &#x3D;&gt;&#123;</span><br><span class="line">	let phoneID &#x3D; &#x2F;^((13|14|15|16|17|18|19))&#123;1&#125;\d&#123;9&#125;$&#x2F;;</span><br><span class="line">	if(!phoneID.test(obj))&#123;</span><br><span class="line">		return false;</span><br><span class="line">	&#125;else&#123;</span><br><span class="line">		return true;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">使用方式：</span><br><span class="line">if(!this.$isPhoneNumber(this.pageDom.phoneNum))&#123;</span><br><span class="line">    this.errTipFun(this.errTip.e001);  &#x2F;&#x2F;手机号输入错误</span><br><span class="line">    return false;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="1-3-对base64位长编码返回的换行进行处理"><a href="#1-3-对base64位长编码返回的换行进行处理" class="headerlink" title="1.3  对base64位长编码返回的换行进行处理"></a>1.3  对base64位长编码返回的换行进行处理</h5><p>param：chart代表要进行转换的64位图片</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">封装方法：</span><br><span class="line">export const handleWrap &#x3D; (chart) &#x3D;&gt;&#123;</span><br><span class="line">	let base64 &#x3D; chart.replace(&#x2F;[\r\n]&#x2F;g, &quot;&quot;);</span><br><span class="line">	return base64;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">使用方式：</span><br><span class="line">let res &#x3D; this.$handleWrap(data.randomData)  &#x2F;&#x2F;data.randomData代表base64位内容</span><br></pre></td></tr></table></figure>
+
+<h4 id="2、在开发过程中遇到的坑"><a href="#2、在开发过程中遇到的坑" class="headerlink" title="2、在开发过程中遇到的坑"></a>2、在开发过程中遇到的坑</h4><blockquote>
+<p>干活首先脑子要灵活，我因为一点小问题也有困扰我一个小时的，太难了</p>
+</blockquote>
+<h5 id="2-1-base64位图片不能显示"><a href="#2-1-base64位图片不能显示" class="headerlink" title="2.1 base64位图片不能显示"></a>2.1 base64位图片不能显示</h5><blockquote>
+<p>具体原因就是因为base64位返回的长编码代有换行，不能自己转换</p>
+<p>但是uni-app底层又是通过背景图片进行显示图片的，base64位图片不经过处理通过img可以显示，但是使用背景就不好显示了</p>
+</blockquote>
+<h5 id="2-2-图片与图片同时使用会有一点间距"><a href="#2-2-图片与图片同时使用会有一点间距" class="headerlink" title="2.2 图片与图片同时使用会有一点间距"></a>2.2 图片与图片同时使用会有一点间距</h5><blockquote>
+<p>因为啥我也不知道，我自己上手使用margin-top调了调</p>
+</blockquote>
+<h4 id="3、总结的知识点"><a href="#3、总结的知识点" class="headerlink" title="3、总结的知识点"></a>3、总结的知识点</h4><h5 id="3-1-在弹窗滑动阻止页面滚动"><a href="#3-1-在弹窗滑动阻止页面滚动" class="headerlink" title="3.1 在弹窗滑动阻止页面滚动"></a>3.1 在弹窗滑动阻止页面滚动</h5><blockquote>
+<p>在要滚动的区域添加上<code>@touchmove.stop.prevent=&quot;moveHandle&quot;</code>就可以阻止滚动</p>
+<p>用的十分顺手啊！！</p>
+</blockquote>
+<h5 id="3-2-手动实现倒计时60s"><a href="#3-2-手动实现倒计时60s" class="headerlink" title="3.2 手动实现倒计时60s"></a>3.2 手动实现倒计时60s</h5><blockquote>
+<p>可能有什么bug 但是目前没发现 ，发现也别讲出来，把正确的发给我就好</p>
+</blockquote>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">方法：</span><br><span class="line">reduceCount:function()&#123; </span><br><span class="line">    if(!this.pageDom.randomNum)&#123;  &#x2F;&#x2F;倒计时结束</span><br><span class="line">    	clearInterval(this.time);  &#x2F;&#x2F;清除计时器</span><br><span class="line">        this.pageDom.randomText &#x3D; &#39;重新获取&#39;  &#x2F;&#x2F;将文本改为重新获取</span><br><span class="line">        this.getchartCode();  &#x2F;&#x2F;获取校验码 </span><br><span class="line">        this.flagArr.randombtnflag &#x3D; true;  &#x2F;&#x2F;获取验证码显示 倒计时隐藏</span><br><span class="line">        this.pageDom.randomNum &#x3D; 60;  &#x2F;&#x2F;将倒计时重新开始</span><br><span class="line">        this.pageDom.randomCode &#x3D; &#39;&#39;;  &#x2F;&#x2F;将短信验证码文本置空</span><br><span class="line">    &#125;else&#123;</span><br><span class="line">    	--this.pageDom.randomNum;  &#x2F;&#x2F;每隔1s减一次</span><br><span class="line">    &#125;</span><br><span class="line">&#125;,</span><br><span class="line">调用：</span><br><span class="line">this.time &#x3D; setInterval(this.reduceCount,1000);  &#x2F;&#x2F;开启倒计时</span><br></pre></td></tr></table></figure>
+
+<h5 id="3-3-源码地址"><a href="#3-3-源码地址" class="headerlink" title="3.3 源码地址"></a>3.3 源码地址</h5><p><a href="https://github.com/userSanEr/flowquery1" target="_blank" rel="noopener">移步github</a></p>
+<p>虽然项目中并没有用到必须的tabbar还有跳转等基础的API，但是也学到了很多，项目虽小，但也可以积累经验。</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者： </strong>SanEr
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="http://yoursite.com/2020/07/16/uni-app%E5%AD%A6%E4%B9%A0%E4%BA%94/" title="uni-app学习五">http://yoursite.com/2020/07/16/uni-app学习五/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%AD%A6%E4%B9%A0%EF%BC%8Cuni-app/" rel="tag"># 学习，uni-app</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/16/uni-app%E5%AD%A6%E4%B9%A0%E4%B8%89/" rel="prev" title="uni-app学习三">
+      <i class="fa fa-chevron-left"></i> uni-app学习三
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/16/uni-app%E5%AD%A6%E4%B9%A0%E5%85%AD/" rel="next" title="uni-app学习六">
+      uni-app学习六 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#1、封装接口以及规范"><span class="nav-number">1.</span> <span class="nav-text">1、封装接口以及规范</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-1-请求数据接口封装"><span class="nav-number">1.1.</span> <span class="nav-text">1.1 请求数据接口封装</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-2-判断手机号是否符合"><span class="nav-number">1.2.</span> <span class="nav-text">1.2  判断手机号是否符合</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#1-3-对base64位长编码返回的换行进行处理"><span class="nav-number">1.3.</span> <span class="nav-text">1.3  对base64位长编码返回的换行进行处理</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#2、在开发过程中遇到的坑"><span class="nav-number">2.</span> <span class="nav-text">2、在开发过程中遇到的坑</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#2-1-base64位图片不能显示"><span class="nav-number">2.1.</span> <span class="nav-text">2.1 base64位图片不能显示</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-2-图片与图片同时使用会有一点间距"><span class="nav-number">2.2.</span> <span class="nav-text">2.2 图片与图片同时使用会有一点间距</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3、总结的知识点"><span class="nav-number">3.</span> <span class="nav-text">3、总结的知识点</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#3-1-在弹窗滑动阻止页面滚动"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 在弹窗滑动阻止页面滚动</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-2-手动实现倒计时60s"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 手动实现倒计时60s</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-3-源码地址"><span class="nav-number">3.3.</span> <span class="nav-text">3.3 源码地址</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="SanEr"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">SanEr</p>
+  <div class="site-description" itemprop="description">先努力优秀，再大方拥有</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">15</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/userSanEr" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;userSanEr" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:1274755639@qq.com" title="E-Mail → mailto:1274755639@qq.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+  <div class="cc-license motion-element" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="/images/cc-by-nc-sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+      </div>
+
+      <iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width=330 height=86 src="//music.163.com/outchain/player?type=2&id=1345789048&auto=1&height=66"></iframe>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">SanEr</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="总访客量">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="总访问量">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  
+  <script color='0,0,255' opacity='0.5' zIndex='-1' count='170' src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+      <script type="text/javascript" src="/js/clicklove.js"></script>
+  
+</body>
+</html>
