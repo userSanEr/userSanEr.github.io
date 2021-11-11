@@ -17,23 +17,23 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"yoursite.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"usersaner.github.io","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":true},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
   <meta name="description" content="本篇主要讲解通过iis发布网站、并添加ssl证书">
 <meta property="og:type" content="article">
 <meta property="og:title" content="IIS发布网站">
-<meta property="og:url" content="http://yoursite.com/2021/11/09/IIS%E5%8F%91%E5%B8%83%E7%BD%91%E7%AB%99/index.html">
+<meta property="og:url" content="https://usersaner.github.io/2021/11/09/IIS%E5%8F%91%E5%B8%83%E7%BD%91%E7%AB%99/index.html">
 <meta property="og:site_name" content="SanEr&#39;s Blog">
 <meta property="og:description" content="本篇主要讲解通过iis发布网站、并添加ssl证书">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-11-09T08:08:38.000Z">
-<meta property="article:modified_time" content="2021-11-09T08:33:12.291Z">
+<meta property="article:modified_time" content="2021-11-11T07:45:24.893Z">
 <meta property="article:author" content="SanEr">
 <meta property="article:tag" content="学习，其他类">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://yoursite.com/2021/11/09/IIS%E5%8F%91%E5%B8%83%E7%BD%91%E7%AB%99/">
+<link rel="canonical" href="https://usersaner.github.io/2021/11/09/IIS%E5%8F%91%E5%B8%83%E7%BD%91%E7%AB%99/">
 
 
 <script id="page-configurations">
@@ -168,7 +168,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2021/11/09/IIS%E5%8F%91%E5%B8%83%E7%BD%91%E7%AB%99/">
+    <link itemprop="mainEntityOfPage" href="https://usersaner.github.io/2021/11/09/IIS%E5%8F%91%E5%B8%83%E7%BD%91%E7%AB%99/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -190,10 +190,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2021-11-09 16:08:38 / 修改时间：16:33:12" itemprop="dateCreated datePublished" datetime="2021-11-09T16:08:38+08:00">2021-11-09</time>
+              <time title="创建时间：2021-11-09 16:08:38" itemprop="dateCreated datePublished" datetime="2021-11-09T16:08:38+08:00">2021-11-09</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-11-11 15:45:24" itemprop="dateModified" datetime="2021-11-11T15:45:24+08:00">2021-11-11</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -225,7 +231,7 @@
         <p>本篇主要讲解通过iis发布网站、并添加ssl证书</p>
 <a id="more"></a>
 
-<h3 id="通过iis发布网站、并添加ssl证书"><a href="#通过iis发布网站、并添加ssl证书" class="headerlink" title="通过iis发布网站、并添加ssl证书"></a>通过iis发布网站、并添加ssl证书</h3><h4 id="首先在iis发布网站"><a href="#首先在iis发布网站" class="headerlink" title="首先在iis发布网站"></a>首先在iis发布网站</h4><p>参考链接：<a href="https://jingyan.baidu.com/article/86fae346047bd53c48121a64.html" target="_blank" rel="noopener">https://jingyan.baidu.com/article/86fae346047bd53c48121a64.html</a></p>
+<h3 id="通过iis发布网站、并添加ssl证书"><a href="#通过iis发布网站、并添加ssl证书" class="headerlink" title="通过iis发布网站、并添加ssl证书"></a>通过iis发布网站、并添加ssl证书</h3><h4 id="首先在iis发布网站"><a href="#首先在iis发布网站" class="headerlink" title="首先在iis发布网站"></a>首先在iis发布网站</h4><p><a href="https://jingyan.baidu.com/article/86fae346047bd53c48121a64.html" target="_blank" rel="noopener">参考链接</a></p>
 <h4 id="添加ssl证书"><a href="#添加ssl证书" class="headerlink" title="添加ssl证书"></a>添加ssl证书</h4><blockquote>
 <ul>
 <li>首先需要获得.pfx 中间证书 .pfx证书的密码</li>
@@ -234,10 +240,10 @@
 </blockquote>
 <ul>
 <li><p>添加ssl证书</p>
-<p>参考连接：<a href="https://jingyan.baidu.com/article/92255446fd7ebbc51648f494.html" target="_blank" rel="noopener">https://jingyan.baidu.com/article/92255446fd7ebbc51648f494.html</a></p>
+<p><a href="https://jingyan.baidu.com/article/92255446fd7ebbc51648f494.html" target="_blank" rel="noopener">参考连接</a></p>
 </li>
 <li><p>下载openssl 通过openssl操作命令 从.pfx中提取.pem .key .crt文件</p>
-<p>参考链接：<a href="https://www.cnblogs.com/zebra-bin/p/11512649.html" target="_blank" rel="noopener">https://www.cnblogs.com/zebra-bin/p/11512649.html</a></p>
+<p><a href="https://www.cnblogs.com/zebra-bin/p/11512649.html" target="_blank" rel="noopener">参考链接</a></p>
 <p>在下面讲解中的***代表以.pfx为后缀名的文件 前面写文件名</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">nginx代理的时候，需要填写证书的crt跟rsa文件路径，通过iis导出的证书是pfx文件（不知道nginx能不能直接用pfx文件，没有查看过相关资料），所以要通过pfx文件生成crt、rsa文件。</span><br><span class="line"></span><br><span class="line">首先用到的工具openssl源码：（https:&#x2F;&#x2F;www.openssl.org&#x2F;source&#x2F;）简易安装程序：（http:&#x2F;&#x2F;slproweb.com&#x2F;products.html）</span><br><span class="line"></span><br><span class="line">win64安装程序</span><br><span class="line"></span><br><span class="line">链接：https:&#x2F;&#x2F;pan.baidu.com&#x2F;s&#x2F;1MscTxbfGQJzABS5tqsNulQ</span><br><span class="line">提取码：oxja</span><br><span class="line"></span><br><span class="line">安装openssl后，把pfx文件拷贝到openssl的bin目录下，使用以下命令：</span><br><span class="line"></span><br><span class="line">openssl pkcs12 -in ***.pfx -nodes -out ***.pem</span><br><span class="line">openssl rsa -in ***.pem -out ***.key</span><br><span class="line">openssl x509 -in ***.pem -out ***.crt</span><br></pre></td></tr></table></figure>
 
@@ -247,7 +253,7 @@
 </ul>
 <ul>
 <li><p>通过获得.crt证书来获得中间证书以及在服务器上绑定中间证书</p>
-<p>参考链接：<a href="https://www.jianshu.com/p/4b7c0e73094c?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation" target="_blank" rel="noopener">https://www.jianshu.com/p/4b7c0e73094c?utm_campaign=maleskine&amp;utm_content=note&amp;utm_medium=seo_notes&amp;utm_source=recommendation</a></p>
+<p><a href="https://www.jianshu.com/p/4b7c0e73094c?utm_campaign=maleskine&utm_content=note&utm_medium=seo_notes&utm_source=recommendation" target="_blank" rel="noopener">参考链接</a></p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">1、先去生成中间证书，先去https:&#x2F;&#x2F;www.myssl.cn&#x2F;tools&#x2F;downloadchain.html这个页面，按照提示，把证书复制上来，由于下载来下的iis文件夹里面没有CRT文件，但是Apache文件夹下有，所以直接拿Apache文件夹下的www.domain.com.crt文件去用，然后下载好中间证书；</span><br><span class="line"></span><br><span class="line">2、Win+R 输入MMC，打开控制台；</span><br><span class="line"></span><br><span class="line">3、在文件-》添加&#x2F;删除管理单元（M）菜单（或者Ctrl+M）打开管理单元，在左边的“可用的管理单元”下面找到证书，双击打开对话框，选择计算机账户，点下一步，选择本地计算机（运行此控制台的计算机），点完成，在“添加或删除单元管理”里面，点确定；</span><br><span class="line"></span><br><span class="line">4、回到MMC控制台，在左侧的树型找到证书-&gt;中检证书颁发机构，右键中间证书颁发机构，弹出菜单选择所有任务-&gt;导入，选择刚才下载的中间证书即可；</span><br><span class="line"></span><br><span class="line">5、重新安装证书，成功</span><br></pre></td></tr></table></figure>
 
 
@@ -271,7 +277,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://yoursite.com/2021/11/09/IIS%E5%8F%91%E5%B8%83%E7%BD%91%E7%AB%99/" title="IIS发布网站">http://yoursite.com/2021/11/09/IIS发布网站/</a>
+    <a href="https://usersaner.github.io/2021/11/09/IIS%E5%8F%91%E5%B8%83%E7%BD%91%E7%AB%99/" title="IIS发布网站">https://usersaner.github.io/2021/11/09/IIS发布网站/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -372,20 +378,20 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">20</span>
+          <span class="site-state-item-count">26</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
             <a href="/categories/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">分类</span></a>
       </div>
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
